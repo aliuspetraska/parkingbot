@@ -1,0 +1,8 @@
+---
+applications:
+- name: parkingbot
+  host: parkingbot
+  memory: 512M
+  env:
+    PUBLISH_RELEASE_CONFIG: true
+    CACHE_NUGET_PACKAGES: false
