@@ -96,7 +96,6 @@ namespace parkingbot
             loggerFactory.AddDebug();
 
             // https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/migrations
-
             // dotnet ef migrations add ParkingBotDb
             // dotnet ef database update
 
