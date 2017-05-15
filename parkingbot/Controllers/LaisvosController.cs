@@ -31,6 +31,8 @@ namespace parkingbot.Controllers
             {
                 if (_parkingBotDbContext != null)
                 {
+                    _parkingBotDbContext.Database.EnsureCreated();
+
                     var availability = _parkingBotDbContext.Availability.ToList();
 
                     if (availability.Count > 0)
