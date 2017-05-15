@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using parkingbot.Models;
@@ -22,9 +24,9 @@ namespace parkingbot.Controllers
         }
 
         [HttpPost]
-        public JsonResult Post([FromBody] string value)
+        public JsonResult Post()
         {
-            var postData = _validation.ParsePostData(value);
+            var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
             if (_validation.IsValidLaisvosVietosParameters(postData))
             {

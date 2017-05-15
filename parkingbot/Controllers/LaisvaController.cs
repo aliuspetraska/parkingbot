@@ -23,9 +23,9 @@ namespace parkingbot.Controllers
         }
 
         [HttpPost]
-        public JsonResult Post([FromBody] string value)
+        public JsonResult Post()
         {
-            var postData = _validation.ParsePostData(value);
+            var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
             if (_validation.IsValidLaisvosVietosParameters(postData))
             {
