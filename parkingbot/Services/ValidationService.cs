@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using parkingbot.Models;
 
 namespace parkingbot.Services
 {
@@ -60,17 +61,6 @@ namespace parkingbot.Services
             return true;
         }
 
-        public string ReturnWhatYouTyped(Dictionary<string, string> postData)
-        {
-            var message = "/";
-
-            message += postData["command"].Replace("%2F", string.Empty).Trim();
-            message += " ";
-            message += string.Join(" ", postData["text"].Split('+')).Trim();
-
-            return message;
-        }
-
         public Dictionary<string, string> ParsePostData(string text)
         {
             var dictionary = text.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries)
@@ -79,13 +69,24 @@ namespace parkingbot.Services
 
             return dictionary;
         }
+
+        public bool AvailabilityRowExists(List<Availability> availabilities, Availability row)
+        {
+            return availabilities.Any(availability => availability.Id == row.Id);
+        }
+
+        public bool LogsRowExists(List<Logs> logs, Logs row)
+        {
+            return logs.Any(log => log.Id == row.Id);
+        }
     }
 
     public interface IValidationService
     {
         bool ValidDate(string dateString);
         bool IsValidLaisvosVietosParameters(Dictionary<string, string> postData);
-        string ReturnWhatYouTyped(Dictionary<string, string> postData);
         Dictionary<string, string> ParsePostData(string text);
+        bool AvailabilityRowExists(List<Availability> availabilities, Availability row);
+        bool LogsRowExists(List<Logs> logs, Logs row);
     }
 }
