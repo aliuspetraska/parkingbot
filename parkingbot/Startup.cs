@@ -99,8 +99,8 @@ namespace parkingbot
             // dotnet ef migrations add ParkingBotDb
             // dotnet ef database update
 
-            // var context = app.ApplicationServices.GetService(typeof(ParkingBotDbContext)) as ParkingBotDbContext;
-            // context?.Database.EnsureCreated();
+            var context = app.ApplicationServices.GetService(typeof(ParkingBotDbContext)) as ParkingBotDbContext;
+            context?.Database.EnsureCreated();
 
             app.UseMvc();
         }

@@ -32,8 +32,6 @@ namespace parkingbot.Controllers
             {
                 if (_parkingBotDbContext != null)
                 {
-                    _parkingBotDbContext.Database.EnsureCreated();
-
                     var data = postData["text"].Trim().Split('+');
 
                     var location = data[0];
