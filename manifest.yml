@@ -6,4 +6,4 @@ applications:
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
   env:
     PUBLISH_RELEASE_CONFIG: true
-    CACHE_NUGET_PACKAGES: false
+    CACHE_NUGET_PACKAGES: true
