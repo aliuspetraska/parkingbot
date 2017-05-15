@@ -28,10 +28,16 @@ namespace parkingbot.Controllers
         {
             var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
+            Console.WriteLine(new StreamReader(Request.Body).ReadToEnd());
+
             if (_validation.IsValidLaisvosVietosParameters(postData))
             {
+                Console.WriteLine("DATA VALID!");
+
                 if (_parkingBotDbContext != null)
                 {
+                    Console.WriteLine("DB CONNECTION OK!");
+
                     var availability = _parkingBotDbContext.Availability.ToList();
 
                     if (availability.Count > 0)
