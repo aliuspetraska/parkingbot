@@ -75,12 +75,16 @@ namespace parkingbot.Controllers
                         _parkingBotDbContext.SaveChanges();
                     }
 
-                    var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.UserName == username && x.Action == action).ToList().Count * 1000;
+                    var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.UserName == username && x.Action == action)
+                                          .ToList()
+                                          .Count * 1000;
 
                     return Json(new Response
                     {
                         ResponseType = "in_channel",
-                        Text = "```Laisva vieta pridėta! (" + location + " " + spot + " nuo " + dateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " + dateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ")```",
+                        Text = "```Laisva vieta pridėta! (" + location + " " + spot + " nuo " +
+                               dateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " +
+                               dateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ")```",
                         Attachments = new List<Attachment>
                         {
                             new Attachment
