@@ -28,7 +28,7 @@ namespace parkingbot.Controllers
         {
             var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
-            if (_validation.IsValidLaisvosVietosParameters(postData))
+            if (_validation.IsValidLaisvaImuParameters(postData))
             {
                 if (_parkingBotDbContext != null)
                 {
