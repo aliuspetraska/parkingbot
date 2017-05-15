@@ -31,7 +31,7 @@ namespace parkingbot.Controllers
             {
                 if (_parkingBotDbContext != null)
                 {
-                    var availability = _parkingBotDbContext.Availability.ToList();
+                    var availability = _parkingBotDbContext.Availability.ToList().OrderBy(o => o.DateFrom).ToList();
 
                     if (availability.Count > 0)
                     {
