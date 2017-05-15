@@ -6,7 +6,7 @@ applications:
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
   services:
   - availability-monitoring-auto
-  - ClearDB MySQL Database
+  - cleardb-mysql-database
   env:
     PUBLISH_RELEASE_CONFIG: true
-    CACHE_NUGET_PACKAGES: true
+    CACHE_NUGET_PACKAGES: false
