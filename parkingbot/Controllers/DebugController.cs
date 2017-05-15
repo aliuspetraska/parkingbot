@@ -8,10 +8,18 @@ namespace parkingbot.Controllers
     [Route("api/[controller]")]
     public class DebugController : Controller
     {
+        private readonly ParkingBotDbContext _parkingBotDbContext;
+
+        public DebugController(ParkingBotDbContext parkingBotDbContext = null)
+        {
+            _parkingBotDbContext = parkingBotDbContext;
+        }
+
         [HttpPost]
         public JsonResult Post()
         {
             var postData = new StreamReader(Request.Body).ReadToEnd();
+            var dbStatus = _parkingBotDbContext != null ? "DB OK!" : "DB ERROR!";
 
             return Json(new Response
             {
@@ -21,7 +29,7 @@ namespace parkingbot.Controllers
                 {
                     new Attachment
                     {
-                        Text = "DEBUG"
+                        Text = dbStatus
                     }
                 }
             });
