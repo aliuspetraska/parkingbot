@@ -4,7 +4,7 @@ applications:
   host: parkingbot
   memory: 512M
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
-  timeout: 300
+  timeout: 180
   services:
   - availability-monitoring-auto
   - cleardb-mysql-database
