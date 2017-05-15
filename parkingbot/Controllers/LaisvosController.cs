@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using parkingbot.Models;
 using parkingbot.Services;
@@ -10,33 +12,55 @@ namespace parkingbot.Controllers
     {
         private readonly ValidationService _validation;
         private readonly GeneratorService _generator;
-        public LaisvosController()
+        private readonly ParkingBotDbContext _parkingBotDbContext;
+
+        public LaisvosController(ParkingBotDbContext parkingBotDbContext = null)
         {
             _validation = new ValidationService();
             _generator = new GeneratorService();
+            _parkingBotDbContext = parkingBotDbContext;
         }
 
-        private const string Dummy = "token=bKxl6WsWmBYMd8fMiHWkgcQ5&team_id=T0CR5GH16&team_domain=centriukas&channel_id=C569MHBFB&channel_name=parkingbotdevelopment&user_id=U4890CUGM&user_name=alius.petraska&command=%2Fkarma&text=seimyniskiu+9+nuo+2017-05-12+iki+2017-09-23&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT0CR5GH16%2F182696705778%2FxvMcZgcxGGk3JoBch1ZZhFQg";
-
-        [HttpGet]
-        public JsonResult Get()
+        [HttpPost]
+        public JsonResult Post([FromBody] string value)
         {
-            var postData = _validation.ParsePostData(Dummy);
+            var postData = _validation.ParsePostData(value);
 
             if (_validation.IsValidLaisvosVietosParameters(postData))
             {
-                return Json(new Response
+                if (_parkingBotDbContext != null)
                 {
-                    ResponseType = "ephemeral",
-                    Text = "```Soriukas, nepaėjo. Bandyk dar kartą.```",
-                    Attachments = new List<Attachment>
+                    var availability = _parkingBotDbContext.Availability.ToList();
+
+                    if (availability.Count > 0)
                     {
-                        new Attachment
+                        return Json(new Response
                         {
-                            Text = _generator.ReturnWhatYouTyped(postData)
-                        }
+                            ResponseType = "ephemeral",
+                            Text = "```" + _generator.GenerateTable(availability) + "```",
+                            Attachments = new List<Attachment>
+                            {
+                                new Attachment
+                                {
+                                    Text = "/imu " + availability[0].Location + " " + availability[0].Spot + " nuo " + availability[0].DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " + availability[0].DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                                }
+                            }
+                        });
                     }
-                });
+
+                    return Json(new Response
+                    {
+                        ResponseType = "ephemeral",
+                        Text = "```Laisvų vietų nėra.```",
+                        Attachments = new List<Attachment>
+                        {
+                            new Attachment
+                            {
+                                Text = _generator.ReturnWhatYouTyped(postData)
+                            }
+                        }
+                    });
+                }
             }
 
             return Json(new Response
@@ -51,14 +75,6 @@ namespace parkingbot.Controllers
                     }
                 }
             });
-        }
-
-        [HttpPost]
-        public JsonResult Post([FromBody] string value)
-        {
-            var testObject = new Availability();
-
-            return Json(testObject);
         }
     }
 }

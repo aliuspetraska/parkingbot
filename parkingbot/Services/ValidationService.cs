@@ -27,6 +27,26 @@ namespace parkingbot.Services
             {
                 var data = postData["text"].Trim().Split('+');
 
+                if (data.Length != 1)
+                {
+                    return false;
+                }
+
+                if (data[0].ToUpper() != "VIETOS")
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsValidLaisvaImuParameters(Dictionary<string, string> postData)
+        {
+            if (postData.ContainsKey("text"))
+            {
+                var data = postData["text"].Trim().Split('+');
+
                 if (data.Length != 6)
                 {
                     return false;
@@ -85,6 +105,7 @@ namespace parkingbot.Services
     {
         bool ValidDate(string dateString);
         bool IsValidLaisvosVietosParameters(Dictionary<string, string> postData);
+        bool IsValidLaisvaImuParameters(Dictionary<string, string> postData);
         Dictionary<string, string> ParsePostData(string text);
         bool AvailabilityRowExists(List<Availability> availabilities, Availability row);
         bool LogsRowExists(List<Logs> logs, Logs row);
