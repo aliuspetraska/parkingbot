@@ -4,6 +4,9 @@ applications:
   host: parkingbot
   memory: 512M
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
+  services:
+  - availability-monitoring-auto
+  - ClearDB MySQL Database
   env:
     PUBLISH_RELEASE_CONFIG: true
     CACHE_NUGET_PACKAGES: true
