@@ -9,7 +9,7 @@ using parkingbot.Services;
 
 namespace parkingbot.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("slack/[controller]")]
     public class ImuController : Controller
     {
         private readonly ValidationService _validation;

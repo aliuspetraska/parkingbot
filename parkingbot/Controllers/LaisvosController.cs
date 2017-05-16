@@ -9,7 +9,7 @@ using parkingbot.Services;
 
 namespace parkingbot.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("slack/[controller]")]
     public class LaisvosController : Controller
     {
         private static ValidationService _validation;
