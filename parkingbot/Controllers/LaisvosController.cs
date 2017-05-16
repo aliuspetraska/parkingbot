@@ -13,8 +13,9 @@ namespace parkingbot.Controllers
     public class LaisvosController : Controller
     {
         private readonly ValidationService _validation;
-        private readonly GeneratorService _generator;
-        private readonly ParkingBotDbContext _parkingBotDbContext;
+
+        private static GeneratorService _generator;
+        private static ParkingBotDbContext _parkingBotDbContext;
 
         public LaisvosController(ParkingBotDbContext parkingBotDbContext = null)
         {
@@ -79,20 +80,49 @@ namespace parkingbot.Controllers
             });
         }
 
-        private static List<Availability> FilterOutAvailability(List<Availability> availabilities)
+        private static List<Availability> FilterOutAvailability(IEnumerable<Availability> availabilities)
         {
-            var result = new List<Availability>();
-
             var todayString = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var today = DateTime.ParseExact(todayString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            var filtered = availabilities.Where(item => item.DateTo > today).ToList();
+            var filtered = new List<Availability>();
+
+            foreach (var item in availabilities)
+            {
+                if (item.DateTo > today)
+                {
+                    filtered.Add(item);
+                }
+                else
+                {
+                    _parkingBotDbContext.Availability.Remove(item);
+                    _parkingBotDbContext.SaveChanges();
+                }
+            }
+
+            var result = new List<Availability>();
 
             foreach (var item in filtered)
             {
                 if (item.DateFrom < today)
                 {
-                    item.DateFrom = today;
+                    var updated = new Availability
+                    {
+                        Id = _generator.UniqueAvailabilityId(item.Location, item.Spot, today, item.DateTo),
+                        Location = item.Location,
+                        Spot = item.Spot,
+                        DateFrom = today,
+                        DateTo = item.DateTo
+                    };
+
+                    _parkingBotDbContext.Availability.Remove(item);
+                    _parkingBotDbContext.SaveChanges();
+
+                    _parkingBotDbContext.Availability.Add(updated);
+                    _parkingBotDbContext.SaveChanges();
+
+                    item.Id = updated.Id;
+                    item.DateFrom = updated.DateFrom;
                 }
 
                 result.Add(item);
