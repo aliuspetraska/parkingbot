@@ -39,7 +39,7 @@ namespace parkingbot.Controllers
                         return Json(new Response
                         {
                             ResponseType = "ephemeral",
-                            Text = "```" + _generator.GenerateTable(availability) + "```",
+                            Text = "```" + _generator.GenerateAvailabilityTable(availability) + "```",
                             Attachments = new List<Attachment>
                             {
                                 new Attachment

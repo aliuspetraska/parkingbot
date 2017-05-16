@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -52,7 +53,7 @@ namespace parkingbot.Services
             return Base64Encode(string.Join("+", array.ToArray()));
         }
 
-        public string GenerateTable(List<Availability> availabilities)
+        public string GenerateAvailabilityTable(List<Availability> availabilities)
         {
             var stringTable = "┌────────────────┬───────┬────────────┬────────────┐\n";
             stringTable += "│  IVAZIAVIMAS   │ VIETA │    NUO     │    IKI     │\n";
@@ -60,7 +61,7 @@ namespace parkingbot.Services
 
             foreach (var availability in availabilities)
             {
-                stringTable += String.Format("| {0,-14} | {1,-5} | {2,10} | {3,10} |\n",
+                stringTable += string.Format("| {0,-14} | {1,-5} | {2,10} | {3,10} |\n",
                     availability.Location,
                     availability.Spot,
                     availability.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
@@ -68,6 +69,26 @@ namespace parkingbot.Services
             }
 
             stringTable += "└────────────────┴───────┴────────────┴────────────┘\n";
+
+            return stringTable;
+        }
+
+        public string GenerateKarmaTable(List<Karma> karmas)
+        {
+            var stringTable = "┌─────┬────────────────────────────────┬───────────┐\n";
+            stringTable += "│  #  │            USERNAME            │   KARMA   │\n";
+            stringTable += "├─────┼────────────────────────────────┼───────────┤\n";
+
+            for (var i = 0; i < karmas.Count; i++)
+            {
+                stringTable += string.Format("| {0,3} | {1,-30} | {2,9} |\n",
+                    i+1,
+                    karmas[i].UserName,
+                    "+" + karmas[i].KarmaPoints * 1000
+                );
+            }
+
+            stringTable += "└─────┴────────────────────────────────┴───────────┘\n";
 
             return stringTable;
         }
@@ -84,6 +105,7 @@ namespace parkingbot.Services
         string UniqueAvailabilityId(string location, string spot, DateTime dateFrom, DateTime dateTo);
         string UniqueLogsId(string username, string location, string spot, DateTime dateFrom, DateTime dateTo,
             string action);
-        string GenerateTable(List<Availability> availabilities);
+        string GenerateAvailabilityTable(List<Availability> availabilities);
+        string GenerateKarmaTable(List<Karma> karmas);
     }
 }
