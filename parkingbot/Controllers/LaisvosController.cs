@@ -105,7 +105,7 @@ namespace parkingbot.Controllers
             {
                 if (item.DateFrom < today)
                 {
-                    var updatedRow = new Availability
+                    var updateRow = new Availability
                     {
                         Id = _generator.UniqueAvailabilityId(item.Location, item.Spot, today, item.DateTo),
                         Location = item.Location,
@@ -117,14 +117,14 @@ namespace parkingbot.Controllers
                     _parkingBotDbContext.Availability.Remove(item);
                     _parkingBotDbContext.SaveChanges();
 
-                    if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updatedRow))
+                    if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updateRow))
                     {
-                        _parkingBotDbContext.Availability.Add(updatedRow);
+                        _parkingBotDbContext.Availability.Add(updateRow);
                         _parkingBotDbContext.SaveChanges();
                     }
 
-                    item.Id = updatedRow.Id;
-                    item.DateFrom = updatedRow.DateFrom;
+                    item.Id = updateRow.Id;
+                    item.DateFrom = updateRow.DateFrom;
                 }
 
                 result.Add(item);

@@ -58,10 +58,55 @@ namespace parkingbot.Controllers
                         }
                         else
                         {
-                            // magija happens here
-                        }
+                            if (result[0].DateFrom == dateFrom && result[0].DateTo != dateTo)
+                            {
+                                var deleteRow = result[0];
 
-                        // insert into logs
+                                _parkingBotDbContext.Availability.Remove(deleteRow);
+                                _parkingBotDbContext.SaveChanges();
+
+                                var updateRow = new Availability
+                                {
+                                    Id = _generator.UniqueAvailabilityId(result[0].Location, result[0].Spot, dateTo.AddDays(1), result[0].DateTo),
+                                    Location = result[0].Location,
+                                    Spot = result[0].Spot,
+                                    DateFrom = dateTo.AddDays(1),
+                                    DateTo = result[0].DateTo
+                                };
+
+                                if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updateRow))
+                                {
+                                    _parkingBotDbContext.Availability.Add(updateRow);
+                                    _parkingBotDbContext.SaveChanges();
+                                }
+                            }
+                            else if (result[0].DateFrom != dateFrom && result[0].DateTo == dateTo)
+                            {
+                                var deleteRow = result[0];
+
+                                _parkingBotDbContext.Availability.Remove(deleteRow);
+                                _parkingBotDbContext.SaveChanges();
+
+                                var updateRow = new Availability
+                                {
+                                    Id = _generator.UniqueAvailabilityId(result[0].Location, result[0].Spot, result[0].DateFrom, dateFrom.AddDays(-1)),
+                                    Location = result[0].Location,
+                                    Spot = result[0].Spot,
+                                    DateFrom = result[0].DateFrom,
+                                    DateTo = dateFrom.AddDays(-1)
+                                };
+
+                                if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updateRow))
+                                {
+                                    _parkingBotDbContext.Availability.Add(updateRow);
+                                    _parkingBotDbContext.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                // two inserts
+                            }
+                        }
 
                         var logsRow = new Logs
                         {
