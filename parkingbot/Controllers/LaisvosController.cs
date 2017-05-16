@@ -12,8 +12,7 @@ namespace parkingbot.Controllers
     [Route("api/[controller]")]
     public class LaisvosController : Controller
     {
-        private readonly ValidationService _validation;
-
+        private static ValidationService _validation;
         private static GeneratorService _generator;
         private static ParkingBotDbContext _parkingBotDbContext;
 
@@ -106,7 +105,7 @@ namespace parkingbot.Controllers
             {
                 if (item.DateFrom < today)
                 {
-                    var updated = new Availability
+                    var updatedRow = new Availability
                     {
                         Id = _generator.UniqueAvailabilityId(item.Location, item.Spot, today, item.DateTo),
                         Location = item.Location,
@@ -118,11 +117,14 @@ namespace parkingbot.Controllers
                     _parkingBotDbContext.Availability.Remove(item);
                     _parkingBotDbContext.SaveChanges();
 
-                    _parkingBotDbContext.Availability.Add(updated);
-                    _parkingBotDbContext.SaveChanges();
+                    if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updatedRow))
+                    {
+                        _parkingBotDbContext.Availability.Add(updatedRow);
+                        _parkingBotDbContext.SaveChanges();
+                    }
 
-                    item.Id = updated.Id;
-                    item.DateFrom = updated.DateFrom;
+                    item.Id = updatedRow.Id;
+                    item.DateFrom = updatedRow.DateFrom;
                 }
 
                 result.Add(item);
