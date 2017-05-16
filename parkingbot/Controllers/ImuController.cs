@@ -23,12 +23,10 @@ namespace parkingbot.Controllers
             _parkingBotDbContext = parkingBotDbContext;
         }
 
-        [HttpGet]
-        public JsonResult Get()
+        [HttpPost]
+        public JsonResult Post()
         {
-            var dummy = "token=tgOdv9MbvpiCedX8V4oLYYJL&team_id=T0CR5GH16&team_domain=centriukas&channel_id=D5DGE5EHH&channel_name=directmessage&user_id=U4890CUGM&user_name=alius.petraska&command=%2Fimu&text=juozapaviciaus+3+nuo+2017-05-16+iki+2017-05-17&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT0CR5GH16%2F183504222305%2FXLBcttAbLoOrPQ1LiKnMR25x";
-
-            var postData = _validation.ParsePostData(dummy);
+            var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
             if (_validation.IsValidLaisvaImuParameters(postData))
             {
@@ -104,7 +102,40 @@ namespace parkingbot.Controllers
                             }
                             else
                             {
-                                // two inserts
+                                var deleteRow = result[0];
+
+                                _parkingBotDbContext.Availability.Remove(deleteRow);
+                                _parkingBotDbContext.SaveChanges();
+
+                                var updateRow1 = new Availability
+                                {
+                                    Id = _generator.UniqueAvailabilityId(result[0].Location, result[0].Spot, result[0].DateFrom, dateFrom.AddDays(-1)),
+                                    Location = result[0].Location,
+                                    Spot = result[0].Spot,
+                                    DateFrom = result[0].DateFrom,
+                                    DateTo = dateFrom.AddDays(-1)
+                                };
+
+                                if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updateRow1))
+                                {
+                                    _parkingBotDbContext.Availability.Add(updateRow1);
+                                    _parkingBotDbContext.SaveChanges();
+                                }
+
+                                var updateRow2 = new Availability
+                                {
+                                    Id = _generator.UniqueAvailabilityId(result[0].Location, result[0].Spot, dateTo.AddDays(1), result[0].DateTo),
+                                    Location = result[0].Location,
+                                    Spot = result[0].Spot,
+                                    DateFrom = dateTo.AddDays(1),
+                                    DateTo = result[0].DateTo
+                                };
+
+                                if (!_validation.AvailabilityRowExists(_parkingBotDbContext.Availability.ToList(), updateRow2))
+                                {
+                                    _parkingBotDbContext.Availability.Add(updateRow2);
+                                    _parkingBotDbContext.SaveChanges();
+                                }
                             }
                         }
 
@@ -162,12 +193,6 @@ namespace parkingbot.Controllers
                     }
                 }
             });
-        }
-
-        [HttpPost]
-        public void Post()
-        {
-            var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
         }
     }
 }
