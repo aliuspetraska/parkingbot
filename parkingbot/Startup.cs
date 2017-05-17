@@ -29,11 +29,11 @@ namespace parkingbot
             {
                 dynamic json = JsonConvert.DeserializeObject(vcapServices);
 
-                if (json.cleardb != null)
+                if (json["compose-for-mysql"] != null)
                 {
                     try
                     {
-                        Configuration["cleardb:0:credentials:uri"] = json.cleardb[0].credentials.uri;
+                        Configuration["compose-for-mysql:0:credentials:uri"] = json["compose-for-mysql"][0].credentials.uri;
                     }
                     catch
                     {
@@ -48,7 +48,7 @@ namespace parkingbot
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var databaseUri = Configuration["cleardb:0:credentials:uri"];
+            var databaseUri = Configuration["compose-for-mysql:0:credentials:uri"];
 
             if (!string.IsNullOrEmpty(databaseUri))
             {
@@ -100,7 +100,7 @@ namespace parkingbot
             // dotnet ef database update
 
             var context = app.ApplicationServices.GetService(typeof(ParkingBotDbContext)) as ParkingBotDbContext;
-            context?.Database.EnsureCreated();
+            context?.Database.Migrate();
 
             app.UseMvc();
         }
