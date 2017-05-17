@@ -7,7 +7,6 @@ applications:
   timeout: 180
   services:
   - availability-monitoring-auto
-  - cleardb-mysql-database
   - compose-for-mysql
   env:
     PUBLISH_RELEASE_CONFIG: true
