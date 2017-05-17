@@ -6,8 +6,8 @@ applications:
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
   timeout: 180
   services:
-  - availability-monitoring-auto
   - compose-for-mysql
+  - availability-monitoring-auto
   env:
     PUBLISH_RELEASE_CONFIG: true
     CACHE_NUGET_PACKAGES: false
