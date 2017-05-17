@@ -8,7 +8,6 @@ applications:
   services:
   - availability_monitoring_auto
   - cleardb_mysql_database
-  - compose_for_mysql
   env:
     PUBLISH_RELEASE_CONFIG: true
     CACHE_NUGET_PACKAGES: false
