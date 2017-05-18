@@ -27,12 +27,7 @@ namespace parkingbot.Services
             {
                 var data = postData["text"].Trim().Split('+');
 
-                if (data.Length != 1)
-                {
-                    return false;
-                }
-
-                if (data[0].ToUpper() != "VIETOS")
+                if (data.Length != 0)
                 {
                     return false;
                 }
