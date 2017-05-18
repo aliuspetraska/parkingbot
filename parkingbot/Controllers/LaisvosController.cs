@@ -28,41 +28,38 @@ namespace parkingbot.Controllers
         {
             var postData = _validation.ParsePostData(new StreamReader(Request.Body).ReadToEnd());
 
-            if (_validation.IsValidLaisvosVietosParameters(postData))
+            if (_parkingBotDbContext != null)
             {
-                if (_parkingBotDbContext != null)
+                var availability = FilterOutAvailability(_parkingBotDbContext.Availability.ToList().OrderBy(o => o.DateFrom).ToList());
+
+                if (availability.Count > 0)
                 {
-                    var availability = FilterOutAvailability(_parkingBotDbContext.Availability.ToList().OrderBy(o => o.DateFrom).ToList());
-
-                    if (availability.Count > 0)
-                    {
-                        return Json(new Response
-                        {
-                            ResponseType = "ephemeral",
-                            Text = "```" + _generator.GenerateAvailabilityTable(availability) + "```",
-                            Attachments = new List<Attachment>
-                            {
-                                new Attachment
-                                {
-                                    Text = "/imu " + availability[0].Location + " " + availability[0].Spot + " nuo " + availability[0].DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " + availability[0].DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-                                }
-                            }
-                        });
-                    }
-
                     return Json(new Response
                     {
                         ResponseType = "ephemeral",
-                        Text = "```Laisvų vietų nėra.```",
+                        Text = "```" + _generator.GenerateAvailabilityTable(availability) + "```",
                         Attachments = new List<Attachment>
                         {
                             new Attachment
                             {
-                                Text = _generator.ReturnWhatYouTyped(postData)
+                                Text = "/imu " + availability[0].Location + " " + availability[0].Spot + " nuo " + availability[0].DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " + availability[0].DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                             }
                         }
                     });
                 }
+
+                return Json(new Response
+                {
+                    ResponseType = "ephemeral",
+                    Text = "```Laisvų vietų nėra.```",
+                    Attachments = new List<Attachment>
+                    {
+                        new Attachment
+                        {
+                            Text = _generator.ReturnWhatYouTyped(postData)
+                        }
+                    }
+                });
             }
 
             return Json(new Response
