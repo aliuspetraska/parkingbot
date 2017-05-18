@@ -35,7 +35,7 @@ namespace parkingbot.Controllers
                             UserName = g.Key,
                             KarmaPoints = g.Count()
                         }
-                    ).OrderBy(o => o.KarmaPoints).ToList();
+                    ).OrderByDescending(o => o.KarmaPoints).ToList();
 
                 return Json(new Response
                 {
