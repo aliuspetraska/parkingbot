@@ -85,7 +85,7 @@ namespace parkingbot.Controllers
 
             foreach (var item in availabilities)
             {
-                if (item.DateTo > today)
+                if (item.DateTo >= today)
                 {
                     filtered.Add(item);
                 }

@@ -28,7 +28,7 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA").ToList()
+                var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA")
                     .GroupBy(u => u.UserName)
                     .Select(g => new Karma
                         {
