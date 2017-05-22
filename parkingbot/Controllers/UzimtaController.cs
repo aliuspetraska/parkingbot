@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,13 @@ using parkingbot.Services;
 namespace parkingbot.Controllers
 {
     [Route("slack/[controller]")]
-    public class KarmaController : Controller
+    public class UzimtaController : Controller
     {
         private readonly ParkingBotDbContext _parkingBotDbContext;
         private readonly GeneratorService _generator;
         private readonly ValidationService _validation;
 
-        public KarmaController(ParkingBotDbContext parkingBotDbContext = null)
+        public UzimtaController(ParkingBotDbContext parkingBotDbContext = null)
         {
             _parkingBotDbContext = parkingBotDbContext;
             _generator = new GeneratorService();
@@ -28,14 +29,8 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var query = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA").ToList();
-                var karmaPoints = query.GroupBy(u => u.UserName)
-                    .Select(g => new Karma
-                        {
-                            UserName = g.Key,
-                            KarmaPoints = g.Count()
-                        }
-                    ).OrderByDescending(o => o.KarmaPoints).ToList();
+                var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU")
+                    .OrderByDescending(o => o.DateTime).ToList();
 
                 var rows = new List<Row>
                 {
@@ -43,20 +38,24 @@ namespace parkingbot.Controllers
                     {
                         Column = new List<string>
                         {
-                            "#",
                             "USERNAME",
-                            "KARMA POINTS"
+                            "LOCATION",
+                            "SPOT",
+                            "FROM",
+                            "IKI"
                         }
                     }
                 };
 
-                rows.AddRange(karmaPoints.Select((t, i) => new Row
+                rows.AddRange(takenSpots.Select(item => new Row
                 {
                     Column = new List<string>
                     {
-                        (i + 1).ToString(),
-                        t.UserName,
-                        "+" + t.KarmaPoints * 1000
+                        item.UserName,
+                        item.Location,
+                        item.Spot,
+                        item.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                        item.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                     }
                 }));
 
