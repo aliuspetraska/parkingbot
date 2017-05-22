@@ -71,6 +71,29 @@ namespace parkingbot.Services
                 {
                     return false;
                 }
+
+                var dateFrom = DateTime.ParseExact(data[3], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var dateTo = DateTime.ParseExact(data[5], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+                var dateNow = DateTime.ParseExact(
+                    DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    "yyyy-MM-dd", CultureInfo.InvariantCulture
+                );
+
+                if (dateFrom > dateTo)
+                {
+                    return false;
+                }
+
+                if (dateFrom < dateNow)
+                {
+                    return false;
+                }
+
+                if (data[1].Length > 10)
+                {
+                    return false;
+                }
             }
 
             return true;

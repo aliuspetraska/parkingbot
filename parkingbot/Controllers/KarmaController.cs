@@ -44,8 +44,8 @@ namespace parkingbot.Controllers
                         Column = new List<string>
                         {
                             "#",
-                            "USERNAME",
-                            "KARMA POINTS"
+                            "VARTOTOJAS",
+                            "KARMA"
                         }
                     }
                 };

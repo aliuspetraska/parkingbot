@@ -31,7 +31,7 @@ namespace parkingbot.Controllers
             if (_parkingBotDbContext != null)
             {
                 var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU" && x.DateFrom >= DateTime.Today)
-                    .OrderBy(o => o.DateFrom).ToList();
+                    .OrderBy(o => o.DateFrom).Take(25).ToList();
 
                 var rows = new List<Row>
                 {
@@ -39,7 +39,7 @@ namespace parkingbot.Controllers
                     {
                         Column = new List<string>
                         {
-                            "USERNAME",
+                            "VARTOTOJAS",
                             "IVAZIAVIMAS",
                             "VIETA",
                             "NUO",
