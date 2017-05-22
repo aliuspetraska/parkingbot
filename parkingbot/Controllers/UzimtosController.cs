@@ -9,13 +9,13 @@ using parkingbot.Services;
 namespace parkingbot.Controllers
 {
     [Route("slack/[controller]")]
-    public class UzimtaController : Controller
+    public class UzimtosController : Controller
     {
         private readonly ParkingBotDbContext _parkingBotDbContext;
         private readonly GeneratorService _generator;
         private readonly ValidationService _validation;
 
-        public UzimtaController(ParkingBotDbContext parkingBotDbContext = null)
+        public UzimtosController(ParkingBotDbContext parkingBotDbContext = null)
         {
             _parkingBotDbContext = parkingBotDbContext;
             _generator = new GeneratorService();
