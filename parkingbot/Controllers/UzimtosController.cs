@@ -40,9 +40,9 @@ namespace parkingbot.Controllers
                         Column = new List<string>
                         {
                             "USERNAME",
-                            "LOCATION",
-                            "SPOT",
-                            "FROM",
+                            "IVAZIAVIMAS",
+                            "VIETA",
+                            "NUO",
                             "IKI"
                         }
                     }
