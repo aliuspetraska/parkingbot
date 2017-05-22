@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,8 +30,8 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU")
-                    .OrderByDescending(o => o.DateFrom).ToList();
+                var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU" && x.DateFrom >= DateTime.Today)
+                    .OrderBy(o => o.DateFrom).ToList();
 
                 var rows = new List<Row>
                 {
