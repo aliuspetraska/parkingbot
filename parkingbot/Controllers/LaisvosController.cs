@@ -30,19 +30,52 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var availability = FilterOutAvailability(_parkingBotDbContext.Availability.ToList().OrderBy(o => o.DateFrom).ToList());
+                var availability = FilterOutAvailability(
+                    _parkingBotDbContext.Availability.OrderBy(o => o.DateFrom).ToList()
+                );
 
                 if (availability.Count > 0)
                 {
+                    var rows = new List<Row>
+                    {
+                        new Row
+                        {
+                            Column = new List<string>
+                            {
+                                "IVAZIAVIMAS",
+                                "VIETA",
+                                "NUO",
+                                "IKI"
+                            }
+                        }
+                    };
+
+                    rows.AddRange(availability.Select(item => new Row
+                    {
+                        Column = new List<string>
+                        {
+                            item.Location,
+                            item.Spot,
+                            item.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                            item.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                        }
+                    }));
+
                     return Json(new Response
                     {
                         ResponseType = "ephemeral",
-                        Text = "```" + _generator.GenerateAvailabilityTable(availability) + "```",
+                        Text = "```" + _generator.GenerateTable(rows) + "```",
                         Attachments = new List<Attachment>
                         {
                             new Attachment
                             {
-                                Text = "/imu " + availability[0].Location + " " + availability[0].Spot + " nuo " + availability[0].DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " iki " + availability[0].DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                                Text = "/imu " + availability[0].Location
+                                               + " "
+                                               + availability[0].Spot
+                                               + " nuo "
+                                               + availability[0].DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) 
+                                               + " iki "
+                                               + availability[0].DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
                             }
                         }
                     });

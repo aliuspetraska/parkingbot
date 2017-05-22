@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,8 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA")
-                    .GroupBy(u => u.UserName)
+                var query = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA").ToList();
+                var karmaPoints = query.GroupBy(u => u.UserName)
                     .Select(g => new Karma
                         {
                             UserName = g.Key,
@@ -37,10 +38,36 @@ namespace parkingbot.Controllers
                         }
                     ).OrderByDescending(o => o.KarmaPoints).ToList();
 
+                var rows = new List<Row>
+                {
+                    new Row
+                    {
+                        Column = new List<string>
+                        {
+                            "#",
+                            "USERNAME",
+                            "KARMA POINTS"
+                        }
+                    }
+                };
+
+                for (var i = 0; i < karmaPoints.Count; i++)
+                {
+                    rows.Add(new Row
+                    {
+                        Column = new List<string>
+                        {
+                            (i+1).ToString(),
+                            karmaPoints[i].UserName,
+                            "+" + karmaPoints[i].KarmaPoints * 1000
+                        }
+                    });
+                }
+
                 return Json(new Response
                 {
                     ResponseType = "ephemeral",
-                    Text = "```" + _generator.GenerateKarmaTable(karmaPoints) + "```"
+                    Text = "```" + _generator.GenerateTable(rows) + "```"
                 });
             }
 

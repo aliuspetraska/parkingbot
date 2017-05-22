@@ -12,3 +12,4 @@ project.lock.json
 Properties/
 vcap-local.json
 .DS_Store
+parkingbot.userprefs

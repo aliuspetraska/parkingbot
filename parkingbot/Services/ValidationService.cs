@@ -99,10 +99,15 @@ namespace parkingbot.Services
     public interface IValidationService
     {
         bool ValidDate(string dateString);
+
         bool IsValidLaisvosVietosParameters(Dictionary<string, string> postData);
+
         bool IsValidLaisvaImuParameters(Dictionary<string, string> postData);
+
         Dictionary<string, string> ParsePostData(string text);
+
         bool AvailabilityRowExists(List<Availability> availabilities, Availability row);
+
         bool LogsRowExists(List<Logs> logs, Logs row);
     }
 }
