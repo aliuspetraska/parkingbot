@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -28,14 +29,20 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var query = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA").ToList();
-                var karmaPoints = query.GroupBy(u => u.UserName)
+                var karmaOwners = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "LAISVA").ToList();
+
+                var karmaList = karmaOwners.Select(karmaOwner => new Karma
+                {
+                    UserName = karmaOwner.UserName,
+                    KarmaPoints = (karmaOwner.DateTo - karmaOwner.DateFrom).Days + 1 - WeekendsCount(karmaOwner.DateFrom, karmaOwner.DateTo)
+                }).ToList();
+
+                var karmaPoints = karmaList.GroupBy(u => u.UserName)
                     .Select(g => new Karma
-                        {
-                            UserName = g.Key,
-                            KarmaPoints = g.Count()
-                        }
-                    ).OrderByDescending(o => o.KarmaPoints).ToList();
+                    {
+                        UserName = g.Key,
+                        KarmaPoints = g.Sum(s => s.KarmaPoints)
+                    }).OrderByDescending(o => o.KarmaPoints).ToList();
 
                 var rows = new List<Row>
                 {
@@ -79,6 +86,25 @@ namespace parkingbot.Controllers
                     }
                 }
             });
+        }
+
+        private static int WeekendsCount(DateTime dateFrom, DateTime dateTo)
+        {
+            var result = 0;
+
+            var difference = (dateTo - dateFrom).Days;
+
+            for (var i = 0; i < difference; i++)
+            {
+                var day = dateFrom.AddDays(i);
+
+                if (day.DayOfWeek == DayOfWeek.Saturday || day.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    result++;
+                }
+            }
+
+            return result;
         }
     }
 }
