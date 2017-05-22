@@ -30,7 +30,7 @@ namespace parkingbot.Controllers
             if (_parkingBotDbContext != null)
             {
                 var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU")
-                    .OrderByDescending(o => o.DateTime).ToList();
+                    .OrderByDescending(o => o.DateFrom).ToList();
 
                 var rows = new List<Row>
                 {
