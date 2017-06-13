@@ -79,6 +79,8 @@ namespace parkingbot.Controllers
                                           .ToList()
                                           .Count * 1000;
 
+                    var currentKarma = (dateTo - dateFrom).Days + 1 - WeekendsCount(dateFrom, dateTo) * 1000;
+
                     return Json(new Response
                     {
                         ResponseType = "in_channel",
@@ -89,7 +91,7 @@ namespace parkingbot.Controllers
                         {
                             new Attachment
                             {
-                                Text = "+1000 karmos taškų. Jau turi +" + karmaPoints + " karmos taškų."
+                                Text = "+" + currentKarma + " karmos taškų. Jau turi +" + karmaPoints + " karmos taškų."
                             }
                         }
                     });
@@ -108,6 +110,25 @@ namespace parkingbot.Controllers
                     }
                 }
             });
+        }
+        
+        private static int WeekendsCount(DateTime dateFrom, DateTime dateTo)
+        {
+            var result = 0;
+
+            var difference = (dateTo - dateFrom).Days;
+
+            for (var i = 0; i < difference; i++)
+            {
+                var day = dateFrom.AddDays(i);
+
+                if (day.DayOfWeek == DayOfWeek.Saturday || day.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    result++;
+                }
+            }
+
+            return result;
         }
     }
 }
