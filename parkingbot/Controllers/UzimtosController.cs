@@ -29,9 +29,9 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var takenSpots = _parkingBotDbContext.Logs.Where(x => x.Action.ToUpper() == "IMU")
-                    .OrderBy(o => o.DateFrom).Take(25).ToList();
-
+                var paimtos = _parkingBotDbContext.Logs.Where(x => x.Action == "imu").ToList();
+                var laisvos = _parkingBotDbContext.Logs.Where(x => x.Action == "laisva").ToList();
+                
                 var rows = new List<Row>
                 {
                     new Row
@@ -47,18 +47,35 @@ namespace parkingbot.Controllers
                     }
                 };
 
-                rows.AddRange(takenSpots.Select(item => new Row
+                foreach (var paimta in paimtos)
                 {
-                    Column = new List<string>
+                    var compromised = false;
+                    
+                    foreach (var laisva in laisvos)
                     {
-                        item.UserName,
-                        item.Location,
-                        item.Spot,
-                        item.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-                        item.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                        if (paimta.UserName == laisva.UserName && paimta.Location == laisva.Location &&
+                            paimta.Spot == laisva.Spot && paimta.DateFrom == laisva.DateFrom && paimta.DateTo == laisva.DateTo)
+                        {
+                            compromised = true;
+                        }
                     }
-                }));
 
+                    if (!compromised)
+                    {
+                        rows.Add(new Row
+                        {
+                            Column = new List<string>
+                            {
+                                paimta.UserName,
+                                paimta.Location,
+                                paimta.Spot,
+                                paimta.DateFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                                paimta.DateTo.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                            }
+                        });
+                    }
+                }
+                
                 return Json(new Response
                 {
                     ResponseType = "ephemeral",
