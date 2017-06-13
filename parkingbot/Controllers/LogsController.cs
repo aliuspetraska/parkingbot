@@ -29,7 +29,7 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var logItems = _parkingBotDbContext.Logs.OrderByDescending(o => o.DateTime).ToList();
+                var logItems = _parkingBotDbContext.Logs.OrderByDescending(o => o.DateTime).Take(25).ToList();
 
                 if (logItems.Count > 0)
                 {
