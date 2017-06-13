@@ -30,6 +30,8 @@ namespace parkingbot.Controllers
             if (_parkingBotDbContext != null)
             {
                 var paimtos = _parkingBotDbContext.Logs.Where(x => x.Action == "imu").ToList();
+                paimtos = paimtos.OrderByDescending(o => o.DateFrom).Take(25).ToList();
+               
                 var laisvos = _parkingBotDbContext.Logs.Where(x => x.Action == "laisva").ToList();
                 
                 var rows = new List<Row>
