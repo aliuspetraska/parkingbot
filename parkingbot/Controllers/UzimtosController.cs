@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,10 @@ namespace parkingbot.Controllers
 
             if (_parkingBotDbContext != null)
             {
-                var paimtos = _parkingBotDbContext.Logs.Where(x => x.Action == "imu").ToList();
+                var todayString = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var today = DateTime.ParseExact(todayString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                
+                var paimtos = _parkingBotDbContext.Logs.Where(x => x.Action == "imu" && x.DateTo >= today).ToList();
                 paimtos = paimtos.OrderByDescending(o => o.DateFrom).Take(25).ToList();
                
                 var laisvos = _parkingBotDbContext.Logs.Where(x => x.Action == "laisva").ToList();
