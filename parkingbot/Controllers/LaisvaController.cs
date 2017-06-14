@@ -79,7 +79,7 @@ namespace parkingbot.Controllers
                                           .ToList()
                                           .Count * 1000;
 
-                    var currentKarma = (dateTo - dateFrom).Days + 1 - WeekendsCount(dateFrom, dateTo) * 1000;
+                    var currentKarma = ((dateTo - dateFrom).Days + 1 - WeekendsCount(dateFrom, dateTo)) * 1000;
 
                     return Json(new Response
                     {
