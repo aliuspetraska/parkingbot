@@ -68,7 +68,7 @@ namespace parkingbot.Controllers
                 {
                     Column = new List<string>
                     {
-                       string.Empty, string.Empty
+                       "-------", "-------------"
                     }
                 });
                 
