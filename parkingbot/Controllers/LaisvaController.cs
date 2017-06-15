@@ -77,7 +77,7 @@ namespace parkingbot.Controllers
 
                     var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.UserName == username && x.Action == action).ToList();
 
-                    var totalKarmaPoints = karmaPoints.Sum(item => (item.DateTo - item.DateFrom).Days + 1 - WeekendsCount(item.DateFrom, item.DateTo));
+                    var totalKarmaPoints = karmaPoints.Sum(item => (item.DateTo - item.DateFrom).Days + 1 - WeekendsCount(item.DateFrom, item.DateTo)) * 1000;
                     var currentKarma = ((dateTo - dateFrom).Days + 1 - WeekendsCount(dateFrom, dateTo)) * 1000;
 
                     return Json(new Response
