@@ -75,10 +75,9 @@ namespace parkingbot.Controllers
                         _parkingBotDbContext.SaveChanges();
                     }
 
-                    var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.UserName == username && x.Action == action)
-                                          .ToList()
-                                          .Count * 1000;
+                    var karmaPoints = _parkingBotDbContext.Logs.Where(x => x.UserName == username && x.Action == action).ToList();
 
+                    var totalKarmaPoints = karmaPoints.Sum(item => (item.DateTo - item.DateFrom).Days + 1 - WeekendsCount(item.DateFrom, item.DateTo));
                     var currentKarma = ((dateTo - dateFrom).Days + 1 - WeekendsCount(dateFrom, dateTo)) * 1000;
 
                     return Json(new Response
@@ -91,7 +90,7 @@ namespace parkingbot.Controllers
                         {
                             new Attachment
                             {
-                                Text = "+" + currentKarma + " karmos taškų. Jau turi +" + karmaPoints + " karmos taškų."
+                                Text = "+" + currentKarma + " karmos taškų. Jau turi +" + totalKarmaPoints + " karmos taškų."
                             }
                         }
                     });
